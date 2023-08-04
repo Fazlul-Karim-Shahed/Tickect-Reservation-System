@@ -4,22 +4,18 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import TravelDetails from './TravelDetails';
-import Classtype from './Classtype';
 import PassengerInfo from './PassengerInfo';
 import Payment from './Payment';
 import Details from './Details';
+import ClassInfo from './ClassInfo';
 
-const steps = ['Travel Details', 'Class Type', 'Passenger Info', 'Payment'];
+const steps = ['Travel Details', 'Choose Class', 'Passenger Info', 'Payment'];
 
 export default function Ticket() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
 
-  const isStepOptional = (step) => {
-    return step === 1;
-  };
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -44,9 +40,6 @@ export default function Ticket() {
   const handleReset = () => {
     setActiveStep(0);
   };
-
-
-
 
 
 
@@ -82,10 +75,9 @@ export default function Ticket() {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            {/* <Typography sx={{ mt: 2, mb: 1 }}>Number of Step: {activeStep + 1}</Typography> */}
             <div className='pt-5'>
               {activeStep + 1 === 1 ? <TravelDetails /> : ''}
-              {activeStep + 1 === 2 ? <Classtype /> : ''}
+              {activeStep + 1 === 2 ? <ClassInfo /> : ''}
               {activeStep + 1 === 3 ? <PassengerInfo /> : ''}
               {activeStep + 1 === 4 ? <Payment /> : ''}
             </div>
@@ -102,11 +94,7 @@ export default function Ticket() {
                   Back
                 </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                {/* {isStepOptional(activeStep) && (
-                    <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                      Skip
-                    </Button>
-                  )} */}
+
                 <Button variant="outlined" onClick={handleNext}>
                   {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                 </Button>

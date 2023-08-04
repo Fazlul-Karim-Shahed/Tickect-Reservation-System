@@ -1,22 +1,38 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik } from 'formik'
-import { createUser } from '../../Function/UserFunction'
+import { checkUserAuth, createUser } from '../../Function/UserFunction'
 import { Link } from 'react-router-dom'
+import { storeLocalStorage } from '../../Function/StorageFunction'
 
 
 export default function Signin() {
+
+  useEffect(() => {
+    // storeLocalStorage()
+
+  }, [])
+
+
+  const [message, setMessage] = useState('')
+
+
   return (
     <div>
       <Formik
 
         initialValues={{
-          name: '',
+          password: '',
           email: '',
         }}
 
         onSubmit={val => {
-          createUser(val).then(data => {
-            console.log(data)
+          checkUserAuth(val, 'signin').then(data => {
+            setMessage(data.message)
+            if (data.auth) {
+              storeLocalStorage(data.data)
+              window.location.replace('/')
+            }
+
           })
         }}
 
@@ -27,21 +43,25 @@ export default function Signin() {
           <div className='w-75 m-auto p-3 my-5'>
             <form className='form-control shadow-sm' onSubmit={handleSubmit} action="">
 
-              <div className='mt-3'>
-                <label htmlFor="name">Name</label> <br />
-                <input className='form-control' value={values.name} onChange={handleChange} name='name' type="text" id='name' />
-              </div>
+              <h4 className='my-3 text-center'>Please register first to reserve ticket</h4>
 
               <div className='mt-3'>
                 <label htmlFor="email">Email</label> <br />
                 <input className='form-control' value={values.email} onChange={handleChange} name='email' type="text" id='email' />
               </div>
 
-              <div>
+              <div className='mt-3'>
+                <label htmlFor="password">Password</label> <br />
+                <input className='form-control' value={values.password} onChange={handleChange} name='password' type="text" id='password' />
+              </div>
+
+              <div className='py-2'>
                 Not have account?<Link to={'/signup'}> Register now</Link>
               </div>
 
               <button className='mt-3 btn btn-success' type="submit">Submit</button>
+
+              <div className='text-center text-danger py-2'>{message}</div>
             </form>
           </div>
 

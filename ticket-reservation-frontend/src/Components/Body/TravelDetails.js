@@ -1,36 +1,26 @@
-import React, { useState } from 'react';
+import { Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
 
-// Sample coordinates of bus stoppages
-const stoppageCoordinates = {
-    stop1: { lat: 40.7128, lng: -74.0060 }, // Replace with the actual latitude and longitude values
-    stop2: { lat: 34.0522, lng: -118.2437 }, // Replace with the actual latitude and longitude values
-    stop3: { lat: 51.5074, lng: -0.1278 },  // Replace with the actual latitude and longitude values
-    // Add more bus stop coordinates here
-};
 
 function TravelDetails() {
-    const [boardingPoint, setBoardingPoint] = useState('stop1');
-    const [destinationPoint, setDestinationPoint] = useState('stop1');
-    const [distance, setDistance] = useState(0);
 
-    function calculateDistance() {
-        if (boardingPoint === destinationPoint) {
-            setDistance(0);
-        } else {
-            const boardingLatLng = stoppageCoordinates[boardingPoint];
-            const destinationLatLng = stoppageCoordinates[destinationPoint];
 
-            if (boardingLatLng && destinationLatLng) {
-                const calculatedDistance = haversineDistance(boardingLatLng, destinationLatLng);
-                setDistance(calculatedDistance.toFixed(2));
-            } else {
-                setDistance('Coordinates not available');
-            }
-        }
-    }
+    useEffect(() => {
 
-    // Haversine formula to calculate distance between two coordinates in meters
-    function haversineDistance(point1, point2) {
+    }, [])
+
+
+
+
+
+    const stoppageCoordinates = {
+        stop1: { lat: 40.7128, lng: -74.0060 },
+        stop2: { lat: 34.0522, lng: -118.2437 },
+        stop3: { lat: 51.5074, lng: -0.1278 },
+
+    };
+
+    const haversineDistance = (point1, point2) => {
         const earthRadius = 6371000; // Earth's radius in meters
         const dLat = toRadians(point2.lat - point1.lat);
         const dLon = toRadians(point2.lng - point1.lng);
@@ -44,33 +34,89 @@ function TravelDetails() {
         return earthRadius * c;
     }
 
-    function toRadians(degrees) {
+    const toRadians = degrees => {
         return degrees * (Math.PI / 180);
     }
 
+    const calculateDistance = (boardingPoint, destinationPoint) => {
+
+        if (boardingPoint === destinationPoint) {
+            return 0
+        }
+        else {
+            const boardingLatLng = stoppageCoordinates[boardingPoint];
+            const destinationLatLng = stoppageCoordinates[destinationPoint];
+
+            if (boardingLatLng && destinationLatLng) {
+                const calculatedDistance = haversineDistance(boardingLatLng, destinationLatLng);
+
+                return calculatedDistance.toFixed(2)
+            }
+            else {
+
+                return 'Coordinates not available'
+            }
+        }
+    }
+
+
     return (
-        <div>
-            <h1>Bus Stoppage System</h1>
-            <div>
-                <label htmlFor="boarding">Boarding Point:</label>
-                <select id="boarding" value={boardingPoint} onChange={(e) => setBoardingPoint(e.target.value)}>
-                    <option value="stop1">Bus Stop 1</option>
-                    <option value="stop2">Bus Stop 2</option>
-                    <option value="stop3">Bus Stop 3</option>
-                    {/* Add more bus stop options here */}
-                </select>
-            </div>
-            <div>
-                <label htmlFor="destination">Destination Point:</label>
-                <select id="destination" value={destinationPoint} onChange={(e) => setDestinationPoint(e.target.value)}>
-                    <option value="stop1">Bus Stop 1</option>
-                    <option value="stop2">Bus Stop 2</option>
-                    <option value="stop3">Bus Stop 3</option>
-                    {/* Add more bus stop options here */}
-                </select>
-            </div>
-            <button onClick={calculateDistance}>Calculate Distance</button>
-            <p>Distance: {distance} meters</p>
+        <div className="m-auto px-2">
+            <Formik
+
+                initialValues={{
+                    boardingPoint: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).boardingPoint,
+
+                    destinationPoint: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).destinationPoint,
+
+                    date: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).date,
+                }}
+
+                onSubmit={val => {
+
+                    let distance = calculateDistance(val.boardingPoint, val.destinationPoint)
+                    localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details', JSON.stringify({ ...val, distance: distance }))
+
+                }}
+
+
+            >
+
+                {({ values, handleChange, handleSubmit }) => (
+
+                    <div>
+
+                        <form className="form-control bg-light shadow py-4" onSubmit={handleSubmit} action="">
+                            <div className="mt-0">
+                                <label htmlFor="boarding">Boarding Point:</label> <br />
+                                <select required onChange={handleChange} name='boardingPoint' className="form-control" id="boarding" value={values.boardingPoint} >
+                                    <option value=''>Select</option>
+                                    <option value="stop1">Bus Stop 1</option>
+                                    <option value="stop2">Bus Stop 2</option>
+                                    <option value="stop3">Bus Stop 3</option>
+                                </select>
+                            </div>
+                            <div className="mt-4">
+                                <label htmlFor="destination">Destination Point:</label> <br />
+                                <select required className="form-control" id="destination" value={values.destinationPoint} name='destinationPoint' onChange={handleChange} >
+                                    <option value=''>Select</option>
+                                    <option value="stop1">Bus Stop 1</option>
+                                    <option value="stop2">Bus Stop 2</option>
+                                    <option value="stop3">Bus Stop 3</option>
+                                </select>
+                            </div>
+
+                            <div className="mt-4">
+                                <label htmlFor="date">Departure time</label> <br />
+                                <input required className="form-control" type="date" name="date" value={values.date} onChange={handleChange} id="date" />
+                            </div>
+
+                            <button className='btn btn-primary mt-4' type="submit">Submit</button>
+                            <div className='text-danger mt-2'>Save before continuing.</div>
+                        </form>
+                    </div>
+                )}
+            </Formik>
         </div>
     );
 }
