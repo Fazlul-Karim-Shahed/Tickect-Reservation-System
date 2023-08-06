@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 
@@ -5,58 +6,37 @@ import React, { useEffect, useState } from 'react';
 function TravelDetails() {
 
 
+
     useEffect(() => {
+        let arr = []
+        axios.get(process.env.REACT_APP_DATABASE_API + 'Route.json').then(data => {
+            for (let i in data.data) {
+                arr.push(data.data[i])
+            }
+
+            setRoutes(arr)
+        })
 
     }, [])
 
 
+    const [routes, setRoutes] = useState([])
 
 
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371e3; // Earth's radius in meters
 
-    const stoppageCoordinates = {
-        stop1: { lat: 40.7128, lng: -74.0060 },
-        stop2: { lat: 34.0522, lng: -118.2437 },
-        stop3: { lat: 51.5074, lng: -0.1278 },
+        const toRadians = (degrees) => degrees * Math.PI / 180;
+        const deltaLat = toRadians(lat2 - lat1);
+        const deltaLon = toRadians(lon2 - lon1);
 
-    };
-
-    const haversineDistance = (point1, point2) => {
-        const earthRadius = 6371000; // Earth's radius in meters
-        const dLat = toRadians(point2.lat - point1.lat);
-        const dLon = toRadians(point2.lng - point1.lng);
-
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRadians(point1.lat)) * Math.cos(toRadians(point2.lat)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
+        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+            Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+            Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return earthRadius * c;
-    }
-
-    const toRadians = degrees => {
-        return degrees * (Math.PI / 180);
-    }
-
-    const calculateDistance = (boardingPoint, destinationPoint) => {
-
-        if (boardingPoint === destinationPoint) {
-            return 0
-        }
-        else {
-            const boardingLatLng = stoppageCoordinates[boardingPoint];
-            const destinationLatLng = stoppageCoordinates[destinationPoint];
-
-            if (boardingLatLng && destinationLatLng) {
-                const calculatedDistance = haversineDistance(boardingLatLng, destinationLatLng);
-
-                return calculatedDistance.toFixed(2)
-            }
-            else {
-
-                return 'Coordinates not available'
-            }
-        }
+        const distance = R * c;
+        return distance / 1000;
     }
 
 
@@ -65,17 +45,22 @@ function TravelDetails() {
             <Formik
 
                 initialValues={{
-                    boardingPoint: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).boardingPoint,
+                    boardingPointIndex: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).boardingPointIndex,
 
-                    destinationPoint: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).destinationPoint,
+                    destinationPointIndex: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).destinationPointIndex,
 
                     date: localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? '' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')).date,
                 }}
 
                 onSubmit={val => {
+                    let distance = calculateDistance(routes[val.boardingPointIndex].latitude, routes[val.boardingPointIndex].longitude, routes[val.destinationPointIndex].latitude, routes[val.destinationPointIndex].longitude)
 
-                    let distance = calculateDistance(val.boardingPoint, val.destinationPoint)
-                    localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details', JSON.stringify({ ...val, distance: distance }))
+                    console.log(distance)
+                    localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details', JSON.stringify({
+                        ...val, distance: distance,
+                        boardingPoint: routes[val.boardingPointIndex].routeName,
+                        destinationPoint: routes[val.destinationPointIndex].routeName
+                    }))
 
                 }}
 
@@ -87,22 +72,31 @@ function TravelDetails() {
                     <div>
 
                         <form className="form-control bg-light shadow py-4" onSubmit={handleSubmit} action="">
+
+                            <h3 className='text-center mb-4'>TRAVEL DETAILS</h3>
+
+
                             <div className="mt-0">
                                 <label htmlFor="boarding">Boarding Point:</label> <br />
-                                <select required onChange={handleChange} name='boardingPoint' className="form-control" id="boarding" value={values.boardingPoint} >
+                                <select required onChange={handleChange} name='boardingPointIndex' className="form-control" id="boarding" value={values.boardingPointIndex} >
                                     <option value=''>Select</option>
-                                    <option value="stop1">Bus Stop 1</option>
-                                    <option value="stop2">Bus Stop 2</option>
-                                    <option value="stop3">Bus Stop 3</option>
+
+                                    {
+                                        routes.map((item, index) => {
+                                            return <option key={Math.random()} value={index}>{item.routeName}</option>
+                                        })
+                                    }
                                 </select>
                             </div>
                             <div className="mt-4">
                                 <label htmlFor="destination">Destination Point:</label> <br />
-                                <select required className="form-control" id="destination" value={values.destinationPoint} name='destinationPoint' onChange={handleChange} >
+                                <select required className="form-control" id="destination" value={values.destinationPointIndex} name='destinationPointIndex' onChange={handleChange} >
                                     <option value=''>Select</option>
-                                    <option value="stop1">Bus Stop 1</option>
-                                    <option value="stop2">Bus Stop 2</option>
-                                    <option value="stop3">Bus Stop 3</option>
+                                    {
+                                        routes.map((item, index) => {
+                                            return <option key={Math.random()} value={index}>{item.routeName}</option>
+                                        })
+                                    }
                                 </select>
                             </div>
 
@@ -111,7 +105,7 @@ function TravelDetails() {
                                 <input required className="form-control" type="date" name="date" value={values.date} onChange={handleChange} id="date" />
                             </div>
 
-                            <button className='btn btn-primary mt-4' type="submit">Submit</button>
+                            <button className='btn btn-primary mt-4' type="submit">Save</button>
                             <div className='text-danger mt-2'>Save before continuing.</div>
                         </form>
                     </div>

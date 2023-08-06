@@ -9,16 +9,36 @@ import PassengerInfo from './PassengerInfo';
 import Payment from './Payment';
 import Details from './Details';
 import ClassInfo from './ClassInfo';
+import axios from 'axios';
 
-const steps = ['Travel Details', 'Choose Class', 'Passenger Info', 'Payment'];
+let steps
+
+if (window.innerWidth <= 500) {
+  steps = ['', '', '', ''];
+}
+else steps = ['Travel', 'Class', 'Passenger', 'Payment'];
+
+
+
 
 export default function Ticket() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
 
 
+  let classInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'class') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'class'))
+
+  let travelInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details'))
+
+  let paymentInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment'))
+
+  let passengerInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'pi') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'pi'))
+
+  let userInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'user') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'user'))
+
+
   const isStepSkipped = (step) => {
-    return skipped.has(step);
+    return skipped.has(step)
   };
 
   const handleNext = () => {
@@ -41,6 +61,27 @@ export default function Ticket() {
     setActiveStep(0);
   };
 
+
+  const proceed = () => {
+    if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo) {
+      window.alert('You have skipped required field')
+    }
+    else {
+      axios.post(process.env.REACT_APP_DATABASE_API + 'PendingTicket.json', {
+
+        userInfo: userInfo,
+        classInfo: classInfo,
+        travelInfo: travelInfo,
+        paymentInfo: paymentInfo,
+        passengerInfo: passengerInfo
+
+      }).then(data => {
+        if (data.status === 200) {
+          window.location.replace('/success')
+        }
+      })
+    }
+  }
 
 
 
@@ -70,8 +111,11 @@ export default function Ticket() {
 
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
               <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={handleReset}>Reset</Button>
+              <Button variant="outlined" onClick={handleReset}>Reset</Button>
+              <Button onClick={proceed} variant="contained" className='ms-4'>Proceed</Button>
             </Box>
+
+
           </React.Fragment>
         ) : (
           <React.Fragment>

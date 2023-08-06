@@ -5,11 +5,11 @@ import { Table } from 'reactstrap'
 export default function ClassInfo() {
 
   let classDetails = [
-    { name: 'Sitting', slots: 30, fare: '50' },
-    { name: 'Economic A', slots: 30, fare: '60' },
-    { name: 'Economic B', slots: 30, fare: '70' },
-    { name: 'Tourist', slots: 30, fare: '90' },
-    { name: 'Cabin', slots: 30, fare: '100' },
+    { name: 'Sitting', slots: 50, fare: '5' },
+    { name: 'Economic A', slots: 30, fare: '6' },
+    { name: 'Economic B', slots: 30, fare: '7' },
+    { name: 'Tourist', slots: 30, fare: '9' },
+    { name: 'Cabin', slots: 30, fare: '10' },
   ]
 
   return (
@@ -38,20 +38,21 @@ export default function ClassInfo() {
           <div>
 
             <form className='form-control shadow py-4' onSubmit={handleSubmit} action="">
+              <h3 className='text-center mb-4'>CHOOSE A CLASS</h3>
 
-              <Table hover>
+              <Table className='' hover>
                 <thead>
                   <tr>
                     <th>Class Type</th>
-                    <th>Slot</th>
-                    <th>Fare</th>
+                    <th>Slot </th>
+                    <th>Fare (/km)</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {
                     classDetails.map((item, index) => {
-                      return <tr>
+                      return <tr className=''>
                         <td>
                           <label htmlFor={"classIndex" + index}>
                             <input checked={String(index) === values.classIndex} className='form-check-input' onChange={handleChange} value={index} type="radio" name="classIndex" id={"classIndex" + index} />
@@ -75,7 +76,7 @@ export default function ClassInfo() {
               </div>
 
 
-              <button className='btn btn-primary mt-4' type="submit">Submit</button>
+              <button className='btn btn-primary mt-4' type="submit">Save</button>
               <div className='text-danger mt-2'>Save before continuing.</div>
             </form>
 

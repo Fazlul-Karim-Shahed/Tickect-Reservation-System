@@ -9,6 +9,10 @@ import Admin from './Admin'
 import Home from './Home'
 import Logout from './Auth/Logout'
 import { checkLocalStorageAuth } from '../Function/StorageFunction'
+import AddRoute from './AddRoute'
+import Pending from './Pending'
+import Approved from './Approved'
+import Success from './Success'
 
 
 export default function Body() {
@@ -28,13 +32,15 @@ export default function Body() {
         <Route path='/' element={<Home />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/contact' element={<Contact />} />
-        {/* <Route path='/ticket' element={<Ticket />} /> */}
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/logout' element={<Logout />} />
+        <Route path='/success' element={<Success />} />
 
-        {admin ? <Route path='/admin' element={<Admin />} /> : ''}
         {auth ? <Route path='/ticket' element={<Ticket />} /> : ''}
+        {admin ? <Route path='/add-route' element={<AddRoute />} /> : ''}
+        {admin ? <Route path='/pending' element={<Pending />} /> : ''}
+        {admin ? <Route path='/approved' element={<Approved />} /> : ''}
 
         <Route path='*' element={<h4 className=''>Page not found</h4>} />
 

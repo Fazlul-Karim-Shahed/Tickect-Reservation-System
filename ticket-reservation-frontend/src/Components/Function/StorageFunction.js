@@ -24,11 +24,15 @@ export const checkLocalStorageAuth = () => {
 
 
 export const deleteLocalStorage = () => {
-    let data = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'user')
-    if (data === null) { }
-    else {
-        localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'user')
-    }
+    localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'user')
+    localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details')
+    localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'pi')
+    localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'class')
+    localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment')
+    // if (user === null) { }
+    // else {
+    //     localStorage.removeItem(process.env.REACT_APP_LOCAL_STORAGE + 'user')
+    // }
 
 }
 

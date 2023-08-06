@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import './Header.css'
 import { Link } from 'react-router-dom';
 import {
     Collapse,
@@ -30,42 +31,57 @@ export default function Header() {
     const [admin, setAdmin] = useState(false);
 
     const toggle = () => setIsOpen(!isOpen);
+
+    const x = () => { }
+
     return (
         <div>
-            <Navbar className='py-3' color="dark" dark light expand="md">
-                <NavbarBrand href="/">ReserveTicket</NavbarBrand>
+            <Navbar className='py-3 myNavbar' color="dark" dark expand="md">
+                <NavbarBrand className='navBrand' href="/">O T R S</NavbarBrand>
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="ms-auto" navbar>
 
                         {admin ? <>
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={'/add-route'}><NavLink className='navLi'>Route</NavLink></Link>
+                            </NavItem>
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={'/approved'}><NavLink className='navLi'>Approved</NavLink></Link>
+                            </NavItem>
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={'/pending'}><NavLink className='navLi'>Pending</NavLink></Link>
+                            </NavItem>
 
-                            <NavItem>
-                                <Link className='text-decoration-none' to={'/logout'}><NavLink>Logout</NavLink></Link>
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={'/logout'}><NavLink className='navLi'>Logout</NavLink></Link>
                             </NavItem>
-                            <NavItem>
-                                <Link className='text-decoration-none' to={'/admin'}><NavLink>AdminPanel</NavLink></Link>
-                            </NavItem>
+
+
+
+
 
                         </> : <>
 
 
-                            <NavItem>
-                                <Link className='text-decoration-none' to={auth ? '/ticket' : '/signin'}><NavLink>Ticket</NavLink></Link>
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={auth ? '/ticket' : '/signin'}><NavLink className='navLi'>Ticket</NavLink></Link>
                             </NavItem>
-                            <NavItem>
-                                <Link className='text-decoration-none' to={'/Profile'}><NavLink>Profile</NavLink></Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link className='text-decoration-none' to={'/contact'}><NavLink>Contact</NavLink></Link>
+
+                            <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                <Link className='text-decoration-none' to={'/contact'}><NavLink className='navLi'>Contact</NavLink></Link>
                             </NavItem>
                             {auth ? <>
-                                <NavItem>
-                                    <Link className='text-decoration-none' to={'/logout'}><NavLink>Logout</NavLink></Link>
+                                <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                    <Link className='text-decoration-none' to={'/Profile'}><NavLink className='navLi'>Profile</NavLink></Link>
                                 </NavItem>
+                                <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                    <Link className='text-decoration-none' to={'/logout'}><NavLink className='navLi'>Logout</NavLink></Link>
+                                </NavItem>
+
                             </> : <>
-                                <NavItem>
-                                    <Link className='text-decoration-none' to={'/signin'}><NavLink>Login</NavLink></Link>
+                                <NavItem onClick={window.innerWidth <= 768 ? toggle : x}>
+                                    <Link className='text-decoration-none' to={'/signin'}><NavLink className='navLi'>Login</NavLink></Link>
                                 </NavItem>
                             </>}
 
