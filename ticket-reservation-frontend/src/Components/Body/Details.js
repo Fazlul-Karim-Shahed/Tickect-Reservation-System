@@ -1,9 +1,40 @@
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, Alert } from 'reactstrap'
 
 export default function Details() {
+
+  const [discountedPrice, setDiscountedPrice] = useState(0)
+
+  useEffect(() => {
+
+    if (classInfo === null) {
+      setDiscountedPrice(0)
+      if (paymentInfo) {
+        localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
+          ...paymentInfo,
+          discountedPayment: discountedPrice
+        }))
+      }
+
+    }
+    else {
+
+      if (!paymentInfo) setDiscountedPrice(0)
+      else {
+        setDiscountedPrice(applyDiscount(isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) ? '0' : Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber), paymentInfo.passengerType.discount))
+      }
+
+      if (paymentInfo) {
+        localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
+          ...paymentInfo,
+          discountedPayment: discountedPrice
+        }))
+      }
+    }
+
+  }, [])
 
 
   let travelInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'travel_details'))
@@ -17,6 +48,11 @@ export default function Details() {
   let userInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'user') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'user'))
 
 
+  const applyDiscount = (mainPrice, discountPercentage) => {
+    const discountAmount = (mainPrice * discountPercentage) / 100;
+    const discountedPrice = mainPrice - discountAmount;
+    return discountedPrice;
+  }
 
 
   return (
@@ -26,7 +62,7 @@ export default function Details() {
       <h6 className='text-center mb-4 fst-italic fw-bold text-primary'>Online Ticket Reservation System</h6>
 
       {
-        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> Please give all the information</strong></Alert> : ''
+        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> {travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped mandatory field'}</strong></Alert> : ''
       }
 
       <div className='border rounded shadow mb-4'>
@@ -135,7 +171,7 @@ export default function Details() {
 
               <tr className=''>
                 <td className=''><span className='fw-bold'>Payable Amount:</span></td>
-                <td>{Math.ceil(!paymentInfo ? '' : paymentInfo.discountedPayment)} Taka</td>
+                <td>{discountedPrice} Taka</td>
               </tr>
 
             </tbody>

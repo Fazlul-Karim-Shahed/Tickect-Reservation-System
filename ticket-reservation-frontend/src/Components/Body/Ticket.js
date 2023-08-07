@@ -10,6 +10,7 @@ import Payment from './Payment';
 import Details from './Details';
 import ClassInfo from './ClassInfo';
 import axios from 'axios';
+import MySpinner from './MySpinner';
 
 let steps
 
@@ -24,6 +25,7 @@ else steps = ['Travel', 'Class', 'Passenger', 'Payment'];
 export default function Ticket() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
+  const [spinner, setSpinner] = useState(false)
 
 
   let classInfo = localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'class') === null ? false : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'class'))
@@ -63,10 +65,13 @@ export default function Ticket() {
 
 
   const proceed = () => {
-    if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo) {
-      window.alert('You have skipped required field')
+    if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0) {
+      window.alert(travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped mandatory field')
     }
     else {
+
+      setSpinner(true)
+
       axios.post(process.env.REACT_APP_DATABASE_API + 'PendingTicket.json', {
 
         userInfo: userInfo,
@@ -78,6 +83,7 @@ export default function Ticket() {
       }).then(data => {
         if (data.status === 200) {
           window.location.replace('/success')
+          setSpinner(false)
         }
       })
     }
@@ -147,6 +153,8 @@ export default function Ticket() {
           </React.Fragment>
         )}
       </Box>
+
+      {spinner ? <MySpinner /> : ''}
     </div>
   );
 }

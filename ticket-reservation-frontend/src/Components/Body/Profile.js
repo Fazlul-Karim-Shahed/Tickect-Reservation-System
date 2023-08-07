@@ -1,14 +1,18 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap'
+import MySpinner from './MySpinner'
 
 export default function Profile() {
 
   const [pendingList, setPendingList] = useState([])
   const [approvedList, setApprovedList] = useState([])
+  const [spinner, setSpinner] = useState(false)
+
 
   useEffect(() => {
 
+    setSpinner(true)
     let pendingArr = []
     let approveArr = []
 
@@ -24,11 +28,12 @@ export default function Profile() {
         }
       }
       setPendingList(pendingArr)
+      setSpinner(false)
     })
 
 
 
-
+    setSpinner(true)
     axios.get(process.env.REACT_APP_DATABASE_API + 'ApprovedTicket.json').then(data => {
       for (let i in data.data) {
         if (userInfo && userInfo.email === data.data[i].userInfo.email) {
@@ -36,6 +41,8 @@ export default function Profile() {
         }
       }
       setApprovedList(approveArr)
+      setSpinner(false)
+
     })
 
 
@@ -140,6 +147,7 @@ export default function Profile() {
 
       {approvedCard}
 
+      {spinner ? <MySpinner /> : ''}
     </div>
   )
 }

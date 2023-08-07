@@ -1,9 +1,11 @@
 import { Formik } from 'formik'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap'
+import { Alert } from '@mui/material';
 
 export default function Payment() {
 
+  const [savingMessage, setSavingMessage] = useState(true)
 
   let passengerType = [
     { type: 'General', discount: 0 },
@@ -26,6 +28,10 @@ export default function Payment() {
 
 
 
+  const savingMessageFun = () => {
+    setSavingMessage(false)
+  }
+
   return (
     <div className="px-2">
       <Formik
@@ -36,6 +42,10 @@ export default function Payment() {
           amount: ''
 
 
+        }}
+
+        validateOnChange={(val) => {
+          console.log(val)
         }}
 
         onSubmit={val => {
@@ -107,8 +117,10 @@ export default function Payment() {
               </div>
 
 
-              <button className='btn btn-primary mt-4' type="submit">Save</button>
-              <div className='text-danger mt-2'>Save before continuing.</div>
+              <button onClick={savingMessageFun} className='btn btn-primary mt-4' type="submit">Save</button>
+              {
+                savingMessage ? <Alert className='mt-4' severity='warning'>Save before continuing.</Alert> : ''
+              }
             </form>
 
           </div>

@@ -1,7 +1,18 @@
 import { Formik } from 'formik'
-import React from 'react'
+import React, { useState } from 'react'
+import { Alert } from '@mui/material';
+
 
 export default function PassengerInfo() {
+
+  const [savingMessage, setSavingMessage] = useState(true)
+
+
+  const savingMessageFun = () => {
+    setSavingMessage(false)
+  }
+
+
   return (
     <div className="px-2">
       <Formik
@@ -61,7 +72,7 @@ export default function PassengerInfo() {
                 </div>
                 <div className="col-md-6">
                   <div className='mt-4'>
-                    <label htmlFor="gender">gender: </label> <br />
+                    <label htmlFor="gender">Gender: </label> <br />
                     <select className='form-control' onChange={handleChange} value={values.gender} name='gender' id='gender'>
                       <option value="">Select</option>
                       <option value="male">Male</option>
@@ -81,7 +92,7 @@ export default function PassengerInfo() {
                 </div>
                 <div className="col-md-6">
                   <div className='mt-4'>
-                    <label htmlFor="nid">NID: </label> <br />
+                    <label htmlFor="nid">NID *: </label> <br />
                     <input required className='form-control' type="text" name='nid' id='nid' onChange={handleChange} value={values.nid} />
                   </div>
                 </div>
@@ -94,8 +105,10 @@ export default function PassengerInfo() {
 
 
 
-              <button className='btn btn-primary mt-4' type="submit">Save</button>
-              <div className='text-danger mt-2'>Save before continuing.</div>
+              <button onClick={savingMessageFun} className='btn btn-primary mt-4' type="submit">Save</button>
+              {
+                savingMessage ? <Alert className='mt-4' severity='warning'>Save before continuing.</Alert> : ''
+              }
             </form>
 
           </div>

@@ -19,7 +19,10 @@ export default function Contact() {
 
         <div>
 
-            <h3 className='my-5 pt-5 text-center'>About Developer</h3>
+            {/* ----------------------------------- About Page -----------------------------------*/}
+
+
+            {/* <h3 className='my-2 pt-5 text-center'>About Developer</h3>
             <div className="row m-0 my-5">
                 <div className="col-md-4 text-center">
                     <img className='img-fluid rounded-circle w-50' src="https://avatars.githubusercontent.com/u/73586196?v=4" alt="" />
@@ -30,7 +33,10 @@ export default function Contact() {
                     <br />
                     <a className='btn btn-success' href="/assets/Fazlul_Karim_NSU_EEE.pdf" download>Download My CV</a>
                 </div>
-            </div>
+            </div> */}
+
+
+            {/* ----------------------------------- Contact Page -----------------------------------*/}
 
 
             <div className='bg-light' id='contact'>

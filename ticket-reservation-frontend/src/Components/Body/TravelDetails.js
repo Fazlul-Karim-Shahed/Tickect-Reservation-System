@@ -1,13 +1,19 @@
 import axios from 'axios';
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
+import { Alert } from '@mui/material';
+import MySpinner from './MySpinner';
 
 
 function TravelDetails() {
 
+    const [savingMessage, setSavingMessage] = useState(true)
+    const [spinner, setSpinner] = useState(false)
+
 
 
     useEffect(() => {
+        setSpinner(true)
         let arr = []
         axios.get(process.env.REACT_APP_DATABASE_API + 'Route.json').then(data => {
             for (let i in data.data) {
@@ -15,6 +21,7 @@ function TravelDetails() {
             }
 
             setRoutes(arr)
+            setSpinner(false)
         })
 
     }, [])
@@ -40,6 +47,9 @@ function TravelDetails() {
     }
 
 
+    const savingMessageFun = () => {
+        setSavingMessage(false)
+    }
     return (
         <div className="m-auto px-2">
             <Formik
@@ -105,12 +115,20 @@ function TravelDetails() {
                                 <input required className="form-control" type="date" name="date" value={values.date} onChange={handleChange} id="date" />
                             </div>
 
-                            <button className='btn btn-primary mt-4' type="submit">Save</button>
-                            <div className='text-danger mt-2'>Save before continuing.</div>
+                            <button onClick={savingMessageFun} className='btn btn-primary mt-4' type="submit">Save</button>
+
+
+                            {
+                                savingMessage ? <Alert className='mt-4' severity='warning'>Save before continuing.</Alert> : ''
+                            }
+
                         </form>
                     </div>
                 )}
             </Formik>
+
+            {spinner ? <MySpinner /> : ''}
+
         </div>
     );
 }

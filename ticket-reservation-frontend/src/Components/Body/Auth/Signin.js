@@ -3,17 +3,13 @@ import { Formik } from 'formik'
 import { checkUserAuth, createUser } from '../../Function/UserFunction'
 import { Link } from 'react-router-dom'
 import { storeLocalStorage } from '../../Function/StorageFunction'
+import MySpinner from '../MySpinner'
 
 
 export default function Signin() {
 
-  useEffect(() => {
-    // storeLocalStorage()
-
-  }, [])
-
-
   const [message, setMessage] = useState('')
+  const [spinner, setSpinner] = useState(false)
 
 
   return (
@@ -26,8 +22,10 @@ export default function Signin() {
         }}
 
         onSubmit={val => {
+          setSpinner(true)
           checkUserAuth(val, 'signin').then(data => {
             setMessage(data.message)
+            setSpinner(false)
             if (data.auth) {
               storeLocalStorage(data.data)
               window.location.replace('/')
@@ -68,6 +66,8 @@ export default function Signin() {
         )}
 
       </Formik>
+
+      {spinner ? <MySpinner /> : ''}
     </div>
   )
 }

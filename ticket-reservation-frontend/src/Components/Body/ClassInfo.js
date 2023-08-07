@@ -1,8 +1,11 @@
 import { Formik } from 'formik'
-import React from 'react'
+import React, { useState } from 'react'
 import { Table } from 'reactstrap'
+import { Alert } from '@mui/material';
 
 export default function ClassInfo() {
+
+  const [savingMessage, setSavingMessage] = useState(true)
 
   let classDetails = [
     { name: 'Sitting', slots: 50, fare: '5' },
@@ -11,6 +14,10 @@ export default function ClassInfo() {
     { name: 'Tourist', slots: 30, fare: '9' },
     { name: 'Cabin', slots: 30, fare: '10' },
   ]
+
+  const savingMessageFun = () => {
+    setSavingMessage(false)
+  }
 
   return (
     <div className="px-2">
@@ -76,8 +83,10 @@ export default function ClassInfo() {
               </div>
 
 
-              <button className='btn btn-primary mt-4' type="submit">Save</button>
-              <div className='text-danger mt-2'>Save before continuing.</div>
+              <button onClick={savingMessageFun} className='btn btn-primary mt-4' type="submit">Save</button>
+              {
+                savingMessage ? <Alert className='mt-4' severity='warning'>Save before continuing.</Alert> : ''
+              }
             </form>
 
           </div>

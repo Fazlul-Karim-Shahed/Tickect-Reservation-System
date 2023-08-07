@@ -31,8 +31,8 @@ export default function AddRoute() {
           <div className='w-75 m-auto my-5'>
             <form onSubmit={handleSubmit} className='form-control p-4 shadow' action="">
               <div className=''>
-                <label htmlFor="routeNAme">Route Name: </label><br />
-                <input className='form-control' type="text" name='routeNAme' value={values.routeNAme} onChange={handleChange} id='routeNAme' />
+                <label htmlFor="routeName">Route Name: </label><br />
+                <input className='form-control' type="text" name='routeName' value={values.routeName} onChange={handleChange} id='routeNAme' />
               </div>
 
               <div className='mt-4'>
