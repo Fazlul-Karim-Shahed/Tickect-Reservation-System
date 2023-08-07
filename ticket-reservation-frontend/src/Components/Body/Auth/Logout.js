@@ -3,15 +3,10 @@ import { deleteLocalStorage } from '../../Function/StorageFunction'
 
 export default function Logout() {
 
-    useEffect(() => {
-
-        deleteLocalStorage()
-        
-
-    }, [])
+    useEffect(() => { deleteLocalStorage() }, [])
 
     return window.location.replace('/signin')
 
 
-    
+
 }

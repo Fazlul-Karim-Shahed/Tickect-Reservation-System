@@ -5,11 +5,11 @@ import { Table, Alert } from 'reactstrap'
 
 export default function Details() {
 
-  const [discountedPrice, setDiscountedPrice] = useState(0)
+  const [discountedPrice, setDiscountedPrice] = useState(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment') === null ? '0' : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment')).discountedPayment)
 
   useEffect(() => {
 
-    if (classInfo === null) {
+    if (!classInfo || !travelInfo) {
       setDiscountedPrice(0)
       if (paymentInfo) {
         localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
@@ -17,20 +17,30 @@ export default function Details() {
           discountedPayment: discountedPrice
         }))
       }
+      else {
+        localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
+          discountedPayment: discountedPrice
+        }))
+      }
 
     }
     else {
 
-      if (!paymentInfo) setDiscountedPrice(0)
+      if (!paymentInfo) {
+        setDiscountedPrice(0)
+        localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
+          discountedPayment: discountedPrice
+        }))
+      }
       else {
         setDiscountedPrice(applyDiscount(isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) ? '0' : Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber), paymentInfo.passengerType.discount))
-      }
 
-      if (paymentInfo) {
         localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
           ...paymentInfo,
           discountedPayment: discountedPrice
         }))
+
+
       }
     }
 
@@ -62,7 +72,7 @@ export default function Details() {
       <h6 className='text-center mb-4 fst-italic fw-bold text-primary'>Online Ticket Reservation System</h6>
 
       {
-        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> {travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped mandatory field'}</strong></Alert> : ''
+        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> {travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped or unsaved mandatory field'}</strong></Alert> : ''
       }
 
       <div className='border rounded shadow mb-4'>

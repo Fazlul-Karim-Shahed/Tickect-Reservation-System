@@ -2,11 +2,13 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap'
+import MySpinner from './MySpinner'
 
 export default function ApprovedModal(props) {
 
-
+    const [spinner, setSpinner] = useState(false)
     const [message, setMessage] = useState('')
+
 
 
     if (props.selected === null || props.selected === undefined) return
@@ -19,11 +21,18 @@ export default function ApprovedModal(props) {
 
 
     const deleteTicket = (item) => {
+
+        setSpinner(true)
         axios.delete(process.env.REACT_APP_DATABASE_API + 'ApprovedTicket/' + item.id + '.json').then(data => {
             if (data.status === 200) {
                 setMessage('Deleted Ticket.')
+                setSpinner(false)
+
             }
-            else setMessage('Something went wrong')
+            else {
+                setMessage('Something went wrong')
+                setSpinner(false)
+            }
         })
     }
 
@@ -158,10 +167,13 @@ export default function ApprovedModal(props) {
 
                 <ModalFooter>
                     <Button color="secondary" onClick={props.toggle}>Cancel</Button>
-                    <Button color="danger" onClick={() => { deleteTicket(props.selected) }}>Delete</Button>
+                    <Button color="danger" onClick={() => { deleteTicket(props.selected) }}>Delete</Button>\
+                    {spinner ? <MySpinner /> : ''}
                 </ModalFooter>
 
             </Modal>
+
+
         </div>
     )
 }

@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap'
 import ApprovedModal from './ApprovedModal'
+import MySpinner from './MySpinner'
 
 
 export default function Approved() {
@@ -9,9 +10,13 @@ export default function Approved() {
   const [approvedList, setApprovedList] = useState([])
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+  const [spinner, setSpinner] = useState(false)
+
 
 
   useEffect(() => {
+
+    setSpinner(true)
 
     let arr = []
     axios.get(process.env.REACT_APP_DATABASE_API + 'ApprovedTicket.json').then(data => {
@@ -23,7 +28,8 @@ export default function Approved() {
       }
 
       setApprovedList(arr)
-      
+      setSpinner(false)
+
     })
 
   }, [open])
@@ -91,6 +97,7 @@ export default function Approved() {
 
       <ApprovedModal open={open} selected={selected} toggle={toggle} />
 
+      {spinner ? <MySpinner /> : ''}
 
     </div>
   )

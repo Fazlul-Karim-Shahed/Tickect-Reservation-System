@@ -2,16 +2,20 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap'
 import PendingModal from './PendingModal'
+import MySpinner from './MySpinner'
 
 export default function Pending() {
 
     const [pendingList, setPendingList] = useState([])
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(null)
-    const [message, setMessage] = useState('')
+    const [spinner, setSpinner] = useState(false)
+
 
 
     useEffect(() => {
+
+        setSpinner(true)
 
         let arr = []
         axios.get(process.env.REACT_APP_DATABASE_API + 'PendingTicket.json').then(data => {
@@ -23,12 +27,13 @@ export default function Pending() {
             }
 
             setPendingList(arr)
+            setSpinner(false)
 
         })
 
     }, [open])
 
-    
+
 
     const toggle = (e, item) => {
         e.stopPropagation();
@@ -39,13 +44,16 @@ export default function Pending() {
 
 
     const rejectTicket = (item) => {
+        setSpinner(true)
         axios.delete(process.env.REACT_APP_DATABASE_API + 'PendingTicket/' + item.id + '.json').then(data => {
             if (data.status === 200) {
-                setMessage('Deleted Ticket.')
                 setOpen(!open)
                 setOpen(!open)
+                // setSpinner(false)
             }
-            else setMessage('Something went wrong.')
+            else {
+                setSpinner(false)
+            }
         })
     }
 
@@ -108,7 +116,7 @@ export default function Pending() {
 
             <PendingModal open={open} selected={selected} toggle={toggle} />
 
-
+            {spinner ? <MySpinner /> : ''}
         </div>
     )
 }

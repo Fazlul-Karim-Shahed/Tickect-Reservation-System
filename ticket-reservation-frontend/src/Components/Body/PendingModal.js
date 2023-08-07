@@ -1,13 +1,16 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap'
+import MySpinner from './MySpinner'
 
 export default function PendingModal(props) {
 
   const [message, setMessage] = useState('')
+  const [spinner, setSpinner] = useState(false)
+
 
   if (props.selected === null || props.selected === undefined) return
-  
+
 
   let travelInfo = props.selected.travelInfo
   let passengerInfo = props.selected.passengerInfo
@@ -18,13 +21,19 @@ export default function PendingModal(props) {
 
   const approve = (item) => {
 
+    setSpinner(true)
+
     axios.post(process.env.REACT_APP_DATABASE_API + 'ApprovedTicket.json', item).then(data => {
       if (data.status === 200) {
         axios.delete(process.env.REACT_APP_DATABASE_API + 'PendingTicket/' + item.id + '.json').then(data => {
           setMessage('Approved Ticket.')
+          setSpinner(false)
         })
       }
-      else setMessage('Something went wrong.')
+      else {
+        setMessage('Something went wrong.')
+        setSpinner(false)
+      }
     })
 
   }
@@ -160,6 +169,7 @@ export default function PendingModal(props) {
         <ModalFooter>
           <Button color="secondary" onClick={props.toggle}>Cancel</Button>
           <Button color="primary" onClick={() => { approve(props.selected) }}> Approve</Button>
+          {spinner ? <MySpinner /> : ''}
 
         </ModalFooter>
 

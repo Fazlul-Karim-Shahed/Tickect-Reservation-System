@@ -66,7 +66,7 @@ export default function Ticket() {
 
   const proceed = () => {
     if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0) {
-      window.alert(travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped mandatory field')
+      window.alert(travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped or unsaved mandatory field')
     }
     else {
 
