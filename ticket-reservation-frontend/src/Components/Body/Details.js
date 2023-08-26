@@ -33,7 +33,8 @@ export default function Details() {
         }))
       }
       else {
-        setDiscountedPrice(applyDiscount(isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) ? '0' : Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber), paymentInfo.passengerType.discount))
+
+        setDiscountedPrice(applyDiscount(isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) ? '0' : Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber), paymentInfo && paymentInfo.hasOwnProperty('passengerType') ? paymentInfo.passengerType.discount : ''))
 
         localStorage.setItem(process.env.REACT_APP_LOCAL_STORAGE + 'payment', JSON.stringify({
           ...paymentInfo,
@@ -72,7 +73,7 @@ export default function Details() {
       <h6 className='text-center mb-4 fst-italic fw-bold text-primary'>Online Ticket Reservation System</h6>
 
       {
-        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> {travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped or unsaved mandatory field'}</strong></Alert> : ''
+        isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 || !paymentInfo.hasOwnProperty('passengerType')  ? <Alert color='danger'><strong> <FontAwesomeIcon icon={faCircleExclamation} /> {travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped or unsaved mandatory field'}</strong></Alert> : ''
       }
 
       <div className='border rounded shadow mb-4'>
@@ -176,7 +177,7 @@ export default function Details() {
 
               <tr className=''>
                 <td className=''><span className='fw-bold'>Discount:</span></td>
-                <td>{!paymentInfo ? '' : paymentInfo.passengerType.discount} %</td>
+                <td>{paymentInfo && paymentInfo.hasOwnProperty('passengerType') ? paymentInfo.passengerType.discount : ''} %</td>
               </tr>
 
               <tr className=''>

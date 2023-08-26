@@ -65,7 +65,7 @@ export default function Ticket() {
 
 
   const proceed = () => {
-    if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0) {
+    if (isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 || !paymentInfo.hasOwnProperty('passengerType')) {
       window.alert(travelInfo.distance === 0 ? 'Boarding point and destination point must be different' : 'You have skipped or unsaved mandatory field')
     }
     else {
@@ -118,7 +118,7 @@ export default function Ticket() {
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
               <Box sx={{ flex: '1 1 auto' }} />
               <Button variant="outlined" onClick={handleReset}>Reset</Button>
-              <Button onClick={proceed} variant="contained" className='ms-4'>Proceed</Button>
+              <Button color={isNaN(Math.ceil(classInfo.fare * parseFloat(travelInfo.distance).toFixed(2) * classInfo.passengerNumber)) || !paymentInfo || !passengerInfo || travelInfo.distance === 0 || !paymentInfo.hasOwnProperty('passengerType') ? 'error' : 'primary'} onClick={proceed} variant="contained" className='ms-4'>Proceed</Button>
             </Box>
 
 
